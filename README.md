@@ -18,7 +18,7 @@ virtualenv -p python3 --no-site-packages venv
 
 Install required python packages:
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Usage
