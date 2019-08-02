@@ -1,3 +1,7 @@
-venv/
+__pycache__/
 *.log
+*.pyc
+.vscode
+docs/_build/
 *.package
+*.log
