@@ -1,0 +1,25 @@
+dist: xenial # because using py>=3.7
+language: python
+matrix:
+  include:
+  - python: 3.4
+  - python: 3.5
+  - python: 3.6
+  - python: 3.7
+    dist: bionic
+  - python: 3.8-dev
+    dist: bionic
+install:
+  - pip install -e .
+  - pip install Pygments mock sphinx sphinx-rtd-theme recommonmark # just to build docs
+  - pip install -r docs/requirements.txt # just to build docs
+script:
+  - which vro-diff # test if ready to be used
+  # test help
+  - vro-diff --help
+  # Diff + legend
+  - vro-diff --legend $TRAVIS_BUILD_DIR/tests/data/package_v1.0.package $TRAVIS_BUILD_DIR/tests/data/package_v1.1.package
+  # Error case using --test
+  - vro-diff --test $TRAVIS_BUILD_DIR/data/package_v1.0.package $TRAVIS_BUILD_DIR/tests/data/package_v1.1.package || if [[ $? -eq 3 ]]; then true; fi
+  # Test building docs
+  - cd docs/ && make html
