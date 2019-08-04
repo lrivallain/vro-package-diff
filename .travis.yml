@@ -1,4 +1,4 @@
-dist: xenial # because using py>=3.7
+dist: xenial
 language: python
 matrix:
   include:
@@ -10,16 +10,19 @@ matrix:
   - python: 3.8-dev
     dist: bionic
 install:
-  - pip install -e .
-  - pip install Pygments mock sphinx sphinx-rtd-theme recommonmark # just to build docs
-  - pip install -r docs/requirements.txt # just to build docs
+- pip install -e .
+- pip install Pygments mock sphinx sphinx-rtd-theme recommonmark
+- pip install -r docs/requirements.txt
 script:
-  - which vro-diff # test if ready to be used
-  # test help
-  - vro-diff --help
-  # Diff + legend
-  - vro-diff --legend $TRAVIS_BUILD_DIR/tests/data/package_v1.0.package $TRAVIS_BUILD_DIR/tests/data/package_v1.1.package
-  # Error case using --test
-  - vro-diff --test $TRAVIS_BUILD_DIR/data/package_v1.0.package $TRAVIS_BUILD_DIR/tests/data/package_v1.1.package || if [[ $? -eq 3 ]]; then true; fi
-  # Test building docs
-  - cd docs/ && make html
+- which vro-diff
+- vro-diff --help
+- vro-diff --legend $TRAVIS_BUILD_DIR/tests/data/package_v1.0.package $TRAVIS_BUILD_DIR/tests/data/package_v1.1.package
+- vro-diff --test $TRAVIS_BUILD_DIR/data/package_v1.0.package $TRAVIS_BUILD_DIR/tests/data/package_v1.1.package || if [[ $? -eq 3 ]]; then true; fi
+- cd docs/ && make html
+deploy:
+  provider: pypi
+  user: lrivallain
+  password:
+    secure: dVDSBK6H1BrR/CzhYIAlUOXqIZ5B2MiaSbfGGRxXs9/U2oObqbEY1OwkWu1A+cVuAs0qd6wRW6O3GoL0azr2A4k0Dppd+LBYLXMyrVNIgWdgRrThJMBLDpFthNXNxGz9ykUsW9cXLvQg01c8Lnh/wh/qUZWA9P6DOIMpusiIcVASoauaHPfcqzWQbxIh6fdkm5XX3V/9PbOmliaMiqZJAx02AwxfP5Un/iGedZY7aqxOY1p/eTCytwDzV6oCZmGlYqY4Wrm+sEgmNSjlfUFQYWdjLfzONIkM/Woa6ZoVsVGYsoVGrTSA8uSFyvBSTMDSFsPgD2sfJKh1MP2fj3s0Sy4TZF6FbE6J+aNwQBaKFZ/emGluJSw6+XLT3hNSULJtHpilD30sinxF3EomJ8MJxz6Kzthvp/gsFhHDQvtdT3hcDJNTs0B1W0gdoTPAcvdA4EsYfhBJGwr1t7FtH2gDqpu1PKYF4qRfl3TJWc86hKInpfv6HZ2C7+3/3u2Q5maM6a9TKXB6bJFRM+OSFUgtenEgHgi0FrnK0Xt9dD9vpG2bV+oa9+7gAzvnDzGB0BECHDlXEQS0K0hO2UyRVYQJpHL58GGecT9ZMS996V6cuqFc2GRChzdgVDMfA+QgT81yz8aOWM+w4oJq7y/Mcy0Tk0kb+nLxJJNN+65AxlNe4gA=
+  skip_existing: true
+  distributions: "sdist bdist_wheel"
