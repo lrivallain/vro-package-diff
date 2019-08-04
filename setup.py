@@ -6,12 +6,11 @@ with open("README.md", "r") as fh:
 
 setup(
     name='vro_package_diff',
-    version='1.0.0',
+    version='1.0.1',
     author="Ludovic Rivallain",
-    author_email='ludovic.rivallain+senseo@gmail.com',
+    author_email='ludovic.rivallain+vropackagediff@gmail.com',
     packages=setuptools.find_packages(),
-    description=
-    "Provide a table-formated diff of two VMware vRealize Orchestrator packages.",
+    description="Provide a table-formated diff of two VMware vRealize Orchestrator packages.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
