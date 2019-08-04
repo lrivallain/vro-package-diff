@@ -1,5 +1,6 @@
 __pycache__/
-*.log
+dist/
+*.egg-info/
 *.pyc
 .vscode
 docs/_build/

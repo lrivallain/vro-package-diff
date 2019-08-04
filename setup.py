@@ -8,7 +8,7 @@ setup(
     name='vro_package_diff',
     version='1.0.0',
     author="Ludovic Rivallain",
-    author_email='ludovic.rivallain+senseo -> gmail.com',
+    author_email='ludovic.rivallain+senseo@gmail.com',
     packages=setuptools.find_packages(),
     description=
     "Provide a table-formated diff of two VMware vRealize Orchestrator packages.",
