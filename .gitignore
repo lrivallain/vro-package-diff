@@ -3,5 +3,6 @@ dist/
 *.egg-info/
 *.pyc
 .vscode
+build/
 docs/_build/
 *.log

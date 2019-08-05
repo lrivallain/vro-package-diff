@@ -10,26 +10,32 @@
 vRO-package-diff tool
 =====================
 
-Provide a table-formated diff of two vRealize Orchestrator packages.
+vRO-package-diff is a Python package to compare 2 VMware vRealize Orchestrator packages.
+
+It provides a table-formated diff of two packages.
 
 .. figure:: ./_static/vro-package-diff-sample.png
     :alt: Sample of output
 
 
-Installation
+Requirements
 ------------
-
-Requirements:
 
 * Python (>=3.4)
 * pip
 
-Then, install and update using pip:
+Linux/Unix, OSX and Windows [*]_ OS are supported.
+
+Installation
+------------
+
+Install and update using pip:
 
 ::
 
     pip install vro_package_diff
 
+.. [*] Please refer to *Windows users* section as there are some existing limitations.
 
 Usage
 -----
@@ -81,6 +87,16 @@ Compare, then exit with error if there is any conflict (`-–test`):
 The script will exit with the number of items with a conflict situation.
 
 This `-–test` option can be usefull to implement CI/CD pipelines to compare, then upload(if there is no conflict) vRO packages.
+
+Windows users
+^^^^^^^^^^^^^
+
+Windows usage is supported with some limitations:
+
+-  No colored output.
+    -  Currently I have no idea on how to fix this.
+-  Some UTF-8 symbols used in output are only with some fonts like *DejaVu Sans Mono*.
+    -  In future, I will try to implement a version of script that do not request UTF-8 support to return results.
 
 
 Documentation

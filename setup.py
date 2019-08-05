@@ -1,12 +1,18 @@
 from distutils.core import setup
 import setuptools
+import vro_package_diff
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+try:
+    with open("README.md", "r") as fh:
+        long_description = fh.read()
+except FileNotFoundError:
+    long_description = "" # empty
+except Exception as e:
+    raise e
 
 setup(
     name='vro_package_diff',
-    version='2.0.0',
+    version=vro_package_diff.__version__,
     author="Ludovic Rivallain",
     author_email='ludovic.rivallain+vropackagediff@gmail.com',
     packages=setuptools.find_packages(),
@@ -25,8 +31,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         "Operating System :: OS Independent",
-        "License :: OSI Approved :: MIT License",
-        "Environment :: Console"
+        "License :: OSI Approved :: MIT License", "Environment :: Console"
     ],
     entry_points={
         'console_scripts': [
