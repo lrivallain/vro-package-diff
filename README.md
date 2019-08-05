@@ -4,10 +4,26 @@
 [![Documentation Status](https://readthedocs.org/projects/vro_package_diff/badge/?version=latest)](https://vro_package_diff.readthedocs.io/en/latest/?badge=latest)
 ![GitHub](https://img.shields.io/github/license/lrivallain/vro-package-diff)
 
-Provide a table-formated diff of two vRealize Orchestrator packages.
+## Project description
+
+vRO-package-diff is a Python package to compare 2 VMware vRealize Orchestrator packages.
+
+It provides a table-formated diff of two packages.
 
 ![Sample of output](./docs/_static/vro-package-diff-sample.png)
 
+## Installing
+
+Install and update using pip:
+
+    pip install click
+
+vRO-package-diff supports Python 3.4 and newer.
+
+## Usage example
+
+    vro-diff --legend tests/data/package_v1.0.package tests/data/package_v1.1.package
+
 ## Documentation
 
-**[vro_package_diff.readthedocs.io](https://vro_package_diff.readthedocs.io/)**
+[On ReadTheDocs](https://vro_package_diff.readthedocs.io/)

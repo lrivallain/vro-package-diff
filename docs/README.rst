@@ -1,4 +1,12 @@
 
+|Build Status| |Documentation Status| |GitHub|
+
+.. |Build Status| image:: https://travis-ci.org/lrivallain/vro-package-diff.svg?branch=master
+   :target: https://travis-ci.org/lrivallain/vro-package-diff
+.. |Documentation Status| image:: https://readthedocs.org/projects/vro_package_diff/badge/?version=latest
+   :target: https://vro_package_diff.readthedocs.io/en/latest/?badge=latest
+.. |GitHub| image:: https://img.shields.io/github/license/lrivallain/vro-package-diff
+
 vRO-package-diff tool
 =====================
 
@@ -13,10 +21,10 @@ Installation
 
 Requirements:
 
-* Python (>=3.1)
+* Python (>=3.4)
 * pip
 
-Then:
+Then, install and update using pip:
 
 ::
 
@@ -42,7 +50,7 @@ Help
     Options:
     -l, --legend  Display the legend after the diff table
     -t, --test    Exit with `0` if package can be safely imported. Else, returns
-                    the number of errors
+                    the number of errors.
     -h, --help    Show this message and exit.
 
 
@@ -50,15 +58,34 @@ Examples
 ^^^^^^^^
 
 
-Compare only
+Compare only:
 
 ::
 
     vro-diff tests/data/package_v1.0.package tests/data/package_v1.1.package
 
 
-Compare, then display legend (`--legend`) and exit with error if there is comflicts (`--test`)
+Compare, then display legend (`--legend`):
 
 ::
 
     vro-diff --legend --test tests/data/package_v1.0.package tests/data/package_v1.1.package
+
+Compare, then exit with error if there is any conflict (`-–test`):
+
+::
+
+    vro-diff --test tests/data/package_v1.0.package tests/data/package_v1.1.package
+    echo $?
+
+The script will exit with the number of items with a conflict situation.
+
+This `-–test` option can be usefull to implement CI/CD pipelines to compare, then upload(if there is no conflict) vRO packages.
+
+
+Documentation
+-------------
+
+`On ReadTheDocs`_
+
+.. _On ReadTheDocs: https://vro_package_diff.readthedocs.io/
