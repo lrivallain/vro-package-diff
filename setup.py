@@ -10,7 +10,8 @@ setup(
     author="Ludovic Rivallain",
     author_email='ludovic.rivallain+vropackagediff@gmail.com',
     packages=setuptools.find_packages(),
-    description="Provide a table-formated diff of two VMware vRealize Orchestrator packages.",
+    description=
+    "Provide a table-formated diff of two VMware vRealize Orchestrator packages.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
@@ -19,8 +20,13 @@ setup(
         "click",  # CLI arguments management
     ],
     classifiers=[
-        "Programming Language :: Python :: 3",
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         "Operating System :: OS Independent",
+        "License :: OSI Approved :: MIT License",
+        "Environment :: Console"
     ],
     entry_points={
         'console_scripts': [

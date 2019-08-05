@@ -1,3 +1,4 @@
+sudo: false
 dist: xenial
 language: python
 matrix:
@@ -11,7 +12,8 @@ matrix:
     dist: bionic
 install:
 - pip install Pygments mock sphinx sphinx-rtd-theme recommonmark
-- pip install -r docs/requirements.txt
+- pip install -U -r docs/requirements.txt
+- pip install .
 script:
 - which vro-diff
 - vro-diff --help
