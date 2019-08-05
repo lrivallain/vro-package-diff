@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='vro_package_diff',
-    version='1.0.1',
+    version='2.0.0',
     author="Ludovic Rivallain",
     author_email='ludovic.rivallain+vropackagediff@gmail.com',
     packages=setuptools.find_packages(),
