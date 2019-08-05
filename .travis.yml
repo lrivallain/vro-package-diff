@@ -10,6 +10,17 @@ matrix:
     dist: bionic
   - python: 3.8-dev
     dist: bionic
+  - name: "Python 3.7 on Windows"
+    os: windows     # Windows 10.0.17134 N/A Build 17134
+    language: shell # 'language: python' is an error on Travis CI Windows
+    before_install:
+      - choco install python
+      - python -m pip install --upgrade pip
+    env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
+  - name: "Python 3.7 on macOS"
+    os: osx
+    osx_image: xcode10.2 # Python 3.7.2 running on macOS 10.14.3
+    language: shell      # 'language: python' is an error on Travis CI macOS
 install:
 - pip install Pygments mock sphinx sphinx-rtd-theme recommonmark
 - pip install -U -r docs/requirements.txt
