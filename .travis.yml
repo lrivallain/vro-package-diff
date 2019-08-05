@@ -20,6 +20,7 @@ script:
 - vro-diff --legend $TRAVIS_BUILD_DIR/tests/data/package_v1.0.package $TRAVIS_BUILD_DIR/tests/data/package_v1.1.package
 - vro-diff --test $TRAVIS_BUILD_DIR/data/package_v1.0.package $TRAVIS_BUILD_DIR/tests/data/package_v1.1.package || if [[ $? -eq 3 ]]; then true; fi
 - cd docs/ && make html
+before_deploy: cd $TRAVIS_BUILD_DIR
 deploy:
   provider: pypi
   user: lrivallain
