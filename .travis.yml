@@ -6,69 +6,63 @@ matrix:
   allow_failures:
   - name: Python 3.7 on Windows
   fast_finish: true
-  include:
-  - python: 3.4
-  - python: 3.5
-  - python: 3.6
-  - python: 3.7
-    dist: bionic
-  - python: 3.8-dev
-    dist: bionic
-  - name: Python 3.7 on Windows
-    os: windows
-    language: shell
-    before_install:
-    - choco install python
-    - python -m pip install --upgrade pip
-    env:
-    - PATH=/c/Python37:/c/Python37/Scripts:$PATH
-    - PYTHONIOENCODING=utf-8
-  - name: Python 3.7 on macOS
-    os: osx
-    osx_image: xcode10.2
-    language: shell
-    before_install:
-    - python3 -m pip install --upgrade virtualenv
-    - virtualenv -p python3 --system-site-packages "$HOME/venv"
-    - source "$HOME/venv/bin/activate"
 install:
 - pip install Pygments mock sphinx sphinx-rtd-theme recommonmark
 - pip install -U -r docs/requirements.txt
 - pip install .
-script:
-- which vro-diff
-- vro-diff --help
-- vro-diff --legend ./tests/data/package_v1.0.package ./tests/data/package_v1.1.package
-- vro-diff --test   ./tests/data/package_v1.0.package ./tests/data/package_v1.1.package || if [[ $? -eq 3 ]]; then true; else false; fi
 jobs:
   include:
-  - python: 3.4
-  - python: 3.5
-  - python: 3.6
-  - python: 3.7
-  - python: 3.8-dev
-  - name: Python 3.7 on Windows
-  - name: Python 3.7 on macOS
-  - stage: Documentation
-    python: 3.7
-    script:
-    - cd $TRAVIS_BUILD_DIR/docs/ && make html
-  - stage: Deploy
-    python: 3.7
-    deploy:
-    - provider: pypi
-      user: lrivallain
-      password:
-        secure: dVDSBK6H1BrR/CzhYIAlUOXqIZ5B2MiaSbfGGRxXs9/U2oObqbEY1OwkWu1A+cVuAs0qd6wRW6O3GoL0azr2A4k0Dppd+LBYLXMyrVNIgWdgRrThJMBLDpFthNXNxGz9ykUsW9cXLvQg01c8Lnh/wh/qUZWA9P6DOIMpusiIcVASoauaHPfcqzWQbxIh6fdkm5XX3V/9PbOmliaMiqZJAx02AwxfP5Un/iGedZY7aqxOY1p/eTCytwDzV6oCZmGlYqY4Wrm+sEgmNSjlfUFQYWdjLfzONIkM/Woa6ZoVsVGYsoVGrTSA8uSFyvBSTMDSFsPgD2sfJKh1MP2fj3s0Sy4TZF6FbE6J+aNwQBaKFZ/emGluJSw6+XLT3hNSULJtHpilD30sinxF3EomJ8MJxz6Kzthvp/gsFhHDQvtdT3hcDJNTs0B1W0gdoTPAcvdA4EsYfhBJGwr1t7FtH2gDqpu1PKYF4qRfl3TJWc86hKInpfv6HZ2C7+3/3u2Q5maM6a9TKXB6bJFRM+OSFUgtenEgHgi0FrnK0Xt9dD9vpG2bV+oa9+7gAzvnDzGB0BECHDlXEQS0K0hO2UyRVYQJpHL58GGecT9ZMS996V6cuqFc2GRChzdgVDMfA+QgT81yz8aOWM+w4oJq7y/Mcy0Tk0kb+nLxJJNN+65AxlNe4gA=
-      distributions: sdist bdist_wheel
-      on:
-        tags: true
-        python: 3.7
-    - provider: releases
-      api_key:
-        secure: EMHShrmZRCJbuiuPG8jRHnESQeypESbnOO8mQOfjIaNaAq1ZKOib9RC7LSVbi+zpzulX/MhfatW/C0K+40ZQpHH3lXFlYcJNP7jRLllT8qS/Ph+aG/TmBF897e/pSxQVM7HC/fHsIsYgD+wBAzKkeR98m62XeAv+F1nqjseEZA/LNcaFDlkH68e604XAKJInp2yS4Yj/ErfOpWGt9snyteacbeyz0bp5vn06h4ZvRxEYZCnFH3KyHdpuWbAhlIQ92Gwby5DXOSEwP8wCpITKcjONXYp3LLfc+AOP9JkPwlP/4q0BxqYaSFm/QVK7mEcnsKK2ywE+nlgpHu//6wEZ8Kvo4chKt82wdJA4mLT/n+Y5FkFwbvGdQIT4e35YCid+nJs014QMZ0uXdrBltORUtB1pj+6NK1r/Rv8GBAIS2wkIa/HEnUFtDE1pt/lWO8Fr2blXN9ebECCjtEuOKLrCP0F29i0gM7chl14Ie2RN1CquY1i8k7iUPRkAUOLLxiNTkMKcjGoTrHF2wDVMubkf87/v54Y8vCHCmpfIn7JgLkJojDEITxKirLX1llYKlKezFeYstOwC7KvFYmS7am+nL0FlQK0wFV1TeClbAFWe61z8rqQNNYKauDUTPCzwqxTUuVYSWr62aqXQ7OmlYcd5a19RjQJla8hUjm48nwr2kV0=
-      file_glob: true
-      file: dist/*
-      skip_cleanup: true
-      on:
-        tags: true
+    - stage: Test
+      script:
+      - which vro-diff
+      - vro-diff --help
+      - vro-diff --legend ./tests/data/package_v1.0.package ./tests/data/package_v1.1.package
+      - vro-diff --test   ./tests/data/package_v1.0.package ./tests/data/package_v1.1.package || if [[ $? -eq 3 ]]; then true; else false; fi
+      include:
+        - python: 3.4
+        - python: 3.5
+        - python: 3.6
+        - python: 3.7
+          dist: bionic
+        - python: 3.8-dev
+          dist: bionic
+        - name: Python 3.7 on Windows
+          os: windows
+          language: shell
+          before_install:
+          - choco install python
+          - python -m pip install --upgrade pip
+          env:
+          - PATH=/c/Python37:/c/Python37/Scripts:$PATH
+          - PYTHONIOENCODING=utf-8
+        - name: Python 3.7 on macOS
+          os: osx
+          osx_image: xcode10.2
+          language: shell
+          before_install:
+          - python3 -m pip install --upgrade virtualenv
+          - virtualenv -p python3 --system-site-packages "$HOME/venv"
+          - source "$HOME/venv/bin/activate"
+    - stage: Documentation
+      python: 3.7
+      script:
+      - cd $TRAVIS_BUILD_DIR/docs/ && make html
+    - stage: Deploy
+      python: 3.7
+      deploy:
+      - provider: pypi
+        user: lrivallain
+        password:
+          secure: dVDSBK6H1BrR/CzhYIAlUOXqIZ5B2MiaSbfGGRxXs9/U2oObqbEY1OwkWu1A+cVuAs0qd6wRW6O3GoL0azr2A4k0Dppd+LBYLXMyrVNIgWdgRrThJMBLDpFthNXNxGz9ykUsW9cXLvQg01c8Lnh/wh/qUZWA9P6DOIMpusiIcVASoauaHPfcqzWQbxIh6fdkm5XX3V/9PbOmliaMiqZJAx02AwxfP5Un/iGedZY7aqxOY1p/eTCytwDzV6oCZmGlYqY4Wrm+sEgmNSjlfUFQYWdjLfzONIkM/Woa6ZoVsVGYsoVGrTSA8uSFyvBSTMDSFsPgD2sfJKh1MP2fj3s0Sy4TZF6FbE6J+aNwQBaKFZ/emGluJSw6+XLT3hNSULJtHpilD30sinxF3EomJ8MJxz6Kzthvp/gsFhHDQvtdT3hcDJNTs0B1W0gdoTPAcvdA4EsYfhBJGwr1t7FtH2gDqpu1PKYF4qRfl3TJWc86hKInpfv6HZ2C7+3/3u2Q5maM6a9TKXB6bJFRM+OSFUgtenEgHgi0FrnK0Xt9dD9vpG2bV+oa9+7gAzvnDzGB0BECHDlXEQS0K0hO2UyRVYQJpHL58GGecT9ZMS996V6cuqFc2GRChzdgVDMfA+QgT81yz8aOWM+w4oJq7y/Mcy0Tk0kb+nLxJJNN+65AxlNe4gA=
+        distributions: sdist bdist_wheel
+        on:
+          tags: true
+          python: 3.7
+      - provider: releases
+        api_key:
+          secure: EMHShrmZRCJbuiuPG8jRHnESQeypESbnOO8mQOfjIaNaAq1ZKOib9RC7LSVbi+zpzulX/MhfatW/C0K+40ZQpHH3lXFlYcJNP7jRLllT8qS/Ph+aG/TmBF897e/pSxQVM7HC/fHsIsYgD+wBAzKkeR98m62XeAv+F1nqjseEZA/LNcaFDlkH68e604XAKJInp2yS4Yj/ErfOpWGt9snyteacbeyz0bp5vn06h4ZvRxEYZCnFH3KyHdpuWbAhlIQ92Gwby5DXOSEwP8wCpITKcjONXYp3LLfc+AOP9JkPwlP/4q0BxqYaSFm/QVK7mEcnsKK2ywE+nlgpHu//6wEZ8Kvo4chKt82wdJA4mLT/n+Y5FkFwbvGdQIT4e35YCid+nJs014QMZ0uXdrBltORUtB1pj+6NK1r/Rv8GBAIS2wkIa/HEnUFtDE1pt/lWO8Fr2blXN9ebECCjtEuOKLrCP0F29i0gM7chl14Ie2RN1CquY1i8k7iUPRkAUOLLxiNTkMKcjGoTrHF2wDVMubkf87/v54Y8vCHCmpfIn7JgLkJojDEITxKirLX1llYKlKezFeYstOwC7KvFYmS7am+nL0FlQK0wFV1TeClbAFWe61z8rqQNNYKauDUTPCzwqxTUuVYSWr62aqXQ7OmlYcd5a19RjQJla8hUjm48nwr2kV0=
+        file_glob: true
+        file: dist/*
+        skip_cleanup: true
+        on:
+          tags: true
