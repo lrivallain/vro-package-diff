@@ -8,8 +8,6 @@ matrix:
   fast_finish: true
 
 install:
-- pip install Pygments mock sphinx sphinx-rtd-theme recommonmark
-- pip install -U -r docs/requirements.txt
 - pip install .
 
 script:
@@ -46,8 +44,11 @@ jobs:
     - source "$HOME/venv/bin/activate"
   - stage: Documentation
     python: 3.7
+    install:
+    - pip install Pygments mock sphinx sphinx-rtd-theme recommonmark
+    - pip install -U -r docs/requirements.txt
     script:
-    - cd $TRAVIS_BUILD_DIR/docs/ && make html
+    - cd docs/ && make html
   - stage: Release & Deploy
     python: 3.7
     script: true
