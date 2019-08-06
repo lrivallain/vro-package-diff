@@ -1,6 +1,7 @@
 sudo: false
 dist: xenial
 language: python
+cache: pip
 matrix:
   allow_failures:
   - name: Python 3.7 on Windows
