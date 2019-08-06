@@ -1,27 +1,41 @@
 
+|Build Status| |Documentation Status| |GitHub|
+
+.. |Build Status| image:: https://travis-ci.org/lrivallain/vro-package-diff.svg?branch=master
+   :target: https://travis-ci.org/lrivallain/vro-package-diff
+.. |Documentation Status| image:: https://readthedocs.org/projects/vro_package_diff/badge/?version=latest
+   :target: https://vro_package_diff.readthedocs.io/en/latest/?badge=latest
+.. |GitHub| image:: https://img.shields.io/github/license/lrivallain/vro-package-diff
+
 vRO-package-diff tool
 =====================
 
-Provide a table-formated diff of two vRealize Orchestrator packages.
+vRO-package-diff is a Python package to compare 2 VMware vRealize Orchestrator packages.
+
+It provides a table-formated diff of two packages.
 
 .. figure:: ./_static/vro-package-diff-sample.png
     :alt: Sample of output
 
 
+Requirements
+------------
+
+* Python (>=3.4)
+* pip
+
+Linux/Unix, OSX and Windows [*]_ OS are supported.
+
 Installation
 ------------
 
-Requirements:
-
-* Python (>=3.1)
-* pip
-
-Then:
+Install and update using pip:
 
 ::
 
     pip install vro_package_diff
 
+.. [*] Please refer to *Windows users* section as there are some existing limitations.
 
 Usage
 -----
@@ -42,7 +56,7 @@ Help
     Options:
     -l, --legend  Display the legend after the diff table
     -t, --test    Exit with `0` if package can be safely imported. Else, returns
-                    the number of errors
+                    the number of errors.
     -h, --help    Show this message and exit.
 
 
@@ -50,15 +64,44 @@ Examples
 ^^^^^^^^
 
 
-Compare only
+Compare only:
 
 ::
 
     vro-diff tests/data/package_v1.0.package tests/data/package_v1.1.package
 
 
-Compare, then display legend (`--legend`) and exit with error if there is comflicts (`--test`)
+Compare, then display legend (`--legend`):
 
 ::
 
     vro-diff --legend --test tests/data/package_v1.0.package tests/data/package_v1.1.package
+
+Compare, then exit with error if there is any conflict (`-–test`):
+
+::
+
+    vro-diff --test tests/data/package_v1.0.package tests/data/package_v1.1.package
+    echo $?
+
+The script will exit with the number of items with a conflict situation.
+
+This `-–test` option can be usefull to implement CI/CD pipelines to compare, then upload(if there is no conflict) vRO packages.
+
+Windows users
+^^^^^^^^^^^^^
+
+Windows usage is supported with some limitations:
+
+-  No colored output.
+    -  Currently I have no idea on how to fix this.
+-  Some UTF-8 symbols used in output are only with some fonts like *DejaVu Sans Mono*.
+    -  In future, I will try to implement a version of script that do not request UTF-8 support to return results.
+
+
+Documentation
+-------------
+
+`On ReadTheDocs`_
+
+.. _On ReadTheDocs: https://vro_package_diff.readthedocs.io/

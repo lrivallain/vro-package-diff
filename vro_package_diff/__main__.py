@@ -6,9 +6,24 @@ import zipfile, sys, os, logging
 
 # external modules
 from terminaltables import SingleTable
-import colored
-from colored import stylize
 import click
+
+# Windows trick: no colored output
+import platform
+if platform.system().lower() == "windows":
+    def stylize(text: str, color: str):
+        """No color for windows users: sorry.
+
+        Args:
+            text (str): Text to print
+            color (str): Unused color for text
+
+        Returns:
+            str: Text from input
+        """
+        return text
+else:
+    from colored import stylize
 
 # local imports
 from .config import *
@@ -38,11 +53,11 @@ def get_vroitems_from_package(package):
             if x.startswith("elements"):
                 item_id = os.path.basename(os.path.split(x)[0])
                 if item_id not in vro_items_id:
-                    with zip_ref.open(os.path.join('elements',item_id, 'info'),'r') as xml_info_file:
+                    with zip_ref.open('elements/' + item_id + '/info','r') as xml_info_file:
                         xml_info = xml_info_file.read()
-                    with zip_ref.open(os.path.join('elements',item_id, 'data'),'r') as data_file:
+                    with zip_ref.open('elements/' + item_id + '/data','r') as data_file:
                         data = data_file.read()
-                    with zip_ref.open(os.path.join('elements',item_id, 'version-history'),'r') as xml_history_file:
+                    with zip_ref.open('elements/' + item_id + '/version-history','r') as xml_history_file:
                         xml_history = xml_history_file.read()
                     vro_item = VROElementMetadata(item_id, xml_info, data, xml_history)
                     vro_items.append(vro_item)

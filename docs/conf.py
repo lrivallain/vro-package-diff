@@ -17,12 +17,13 @@ sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'vro_package_diff'
-copyright = '2019, Ludovic Rivallain'
+project = 'vro-package-diff'
+copyright = 'MIT License, 2019, Ludovic Rivallain'
 author = 'Ludovic Rivallain'
 
 # The full version, including alpha/beta/rc tags
-release = '2.0.0'
+import vro_package_diff
+release = vro_package_diff.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -35,8 +36,12 @@ release = '2.0.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx.ext.doctest',
-    'sphinx.ext.todo', 'sphinx.ext.autosummary', 'sphinx.ext.extlinks',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.doctest',
+    'sphinx.ext.todo',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.extlinks',
     'sphinx.ext.viewcode'
 ]
 
