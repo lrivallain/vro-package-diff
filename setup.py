@@ -27,10 +27,15 @@ setup(
     ],
     classifiers=[
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        "Operating System :: OS Independent",
+        'Programming Language :: Python :: 3.8',
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: Unix',
+        'Operating System :: POSIX :: Linux',
         "License :: OSI Approved :: MIT License", "Environment :: Console"
     ],
     entry_points={
