@@ -16,7 +16,7 @@ It provides a table-formated diff of two packages.
 
 Install and update using pip:
 
-    pip install click
+    pip install vro-package-diff
 
 vRO-package-diff supports Python 3.4 and newer.
 
