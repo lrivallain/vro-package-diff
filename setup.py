@@ -16,8 +16,7 @@ setup(
     author="Ludovic Rivallain",
     author_email='ludovic.rivallain+vropackagediff@gmail.com',
     packages=setuptools.find_packages(),
-    description=
-    "Provide a table-formated diff of two VMware vRealize Orchestrator packages.",
+    description="Provide a table-formated diff of two VMware vRealize Orchestrator packages.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
