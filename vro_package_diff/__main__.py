@@ -5,11 +5,12 @@
 import zipfile, sys, os, logging
 
 # external modules
-from terminaltables import SingleTable
+from terminaltables import SingleTable, AsciiTable
 import click
 
 # Windows trick: no colored output
 import platform
+
 if platform.system().lower() == "windows":
     def stylize(text: str, color: str):
         """No color for windows users: sorry.
@@ -36,6 +37,20 @@ logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s',
                     filemode='w',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+def _stylize(text: str, color: str="", colorized: bool=True):
+    """Print colored or uncolored text.
+
+    Args:
+        text (str): Text to print
+        color (str): Color to use
+        colorized (bool, optional): Use color or not?. Defaults to True.
+    """
+    if not colorized:
+        return text
+    else:
+        return stylize(text, color)
 
 
 def get_vroitems_from_package(package):
@@ -66,70 +81,91 @@ def get_vroitems_from_package(package):
     return vro_items
 
 
-def legend_print():
+def legend_print(ascii: bool=False, colorized: bool=True):
     """Print a legend at the end of diff table
+
+    Args:
+        ascii (bool): Use ASCII for output or not?
+        colorized (bool, optional): Use color or not?. Defaults to True.
     """
     data = [["Legend", '']]
     pretty_table = SingleTable(data)
-    legend = ("•%s  Items with no upgrade required"                % stylize(" ⇄ ", COLOR_NO_UPGRADE),
-              "•%s  Items ignored in the vRO merge process"        % stylize(" ⇄ ", COLOR_UNSUPPORTED),
-              "•%s  New items (will be imported)"                  % stylize(" + ", COLOR_NEW),
-              "•%s  Items that will be upgraded in import process" % stylize(" ⇉ ", COLOR_UPGRADE),
-              "•%s  Items with a version conflict"                 % stylize(" ≠ ", COLOR_CONFLICT),
-              "       For items with conflict:",
-              "       ‣ Check that the version in file A is lower than in the file B.",
-              "       ‣ If versions are the same, the content is not. Upgrade version on",
-              "         file B to overwrite item during the import process.")
+    legend = ""
+    symbol_mode = "symbol_ascii"
+    list_bullet = "*"  # •
+    for loi in OUTPUT_SETUP.keys():
+        legend += "{} {}  {}\n".format(
+            list_bullet,
+            _stylize(
+                OUTPUT_SETUP[loi].get(symbol_mode),
+                OUTPUT_SETUP[loi].get('color'),
+                colorized
+            ),
+            OUTPUT_SETUP[loi].get('legend')
+        )
+    legend += "\nFor items with conflict:\n"
+    legend += "   ‣ Check that the version in file A is lower than in the file B.\n"
+    legend += "   ‣ If versions are the same, the content is not. Upgrade version on\n"
+    legend += "     file B to overwrite item during the import process.\n"
     max_width = pretty_table.column_max_width(1)
-    wrapped_legend = '\n'.join(legend)
-    pretty_table.table_data[0][1] = wrapped_legend
+    pretty_table.table_data[0][1] = legend
     print("\n%s" % pretty_table.table)
 
 
-def table_pprint(items_with_simple_upgrade, items_without_upgrade,
-                items_with_conflict, new_items, ignored_items):
+def table_pprint(lists_of_items_by_state: dict, ascii: bool=False, colorized: bool=True):
     """Generate and print a pretty table for output information.
 
     Args:
-        items_with_simple_upgrade VROElementMetadata[]): list of items detected as upgradable.
-        items_without_upgrade (VROElementMetadata[]): list of items detected as similar.
-        items_with_conflict (VROElementMetadata[]): list of items detected with a version conflict.
-        new_items (VROElementMetadata[]): list of items not present in source package.
-        ignored_items (VROElementMetadata[]): list of package without import strategy.
+        lists_of_items_by_state (dict of VROElementMetadata[]): A dict of items, stored by
+            import state
+        ascii (bool): Use ASCII for output or not?
+        colorized (bool, optional): Use color or not?. Defaults to True.
     """
     data = []
+    title = "Diff betwenn packages"
+    # Headers
     data.append(["ID", "Name", "Type", "Version B", "Result", "Version A"])
-    for x in items_without_upgrade:
-        data.append([x.id, x.name, x.type, x.version, stylize("  ⇄   ", COLOR_NO_UPGRADE),   x.comp_version])
-    for x in ignored_items:
-        data.append([x.id, x.name, x.type, "",        stylize("  ⇄   ", COLOR_UNSUPPORTED), ""])
-    for x in new_items:
-        data.append([x.id, x.name, x.type, x.version, stylize("  +   ", COLOR_NEW),         ""])
-    for x in items_with_simple_upgrade:
-        data.append([x.id, x.name, x.type, x.version, stylize("  ⇉   ", COLOR_UPGRADE),     x.comp_version])
-    for x in items_with_conflict:
-        data.append([x.id, x.name, x.type, x.version, stylize("  ≠   ", COLOR_CONFLICT),    x.comp_version])
-    pretty_table = SingleTable(data, title="Diff betwenn packages")
-    print(pretty_table.table)
+    symbol_mode = "symbol_utf8"
+    if ascii:
+        symbol_mode = "symbol_ascii"
+    for loi in OUTPUT_SETUP.keys():
+        for x in lists_of_items_by_state.get(loi, []):
+            data.append([
+                x.id, x.name, x.type,
+                x.version, # Version B
+                _stylize(
+                    OUTPUT_SETUP[loi].get(symbol_mode),
+                    OUTPUT_SETUP[loi].get('color'),
+                    colorized
+                ),
+                x.comp_version # Version A
+            ])
+    if ascii:
+        print(AsciiTable(data, title).table)
+    else:
+        print(SingleTable(data, title).table)
 
 
-def diff_vro_items(items_src, items_dst):
+def diff_vro_items(items_src, items_dst, ascii: bool=False, colorized: bool=True):
     """Compare two vRO items lists
 
     Args:
         items_src (VROElementMetadata[]): Original list of vRO items
         items_dst (VROElementMetadata[]): Destination list of vRO items
+        ascii (bool): Use ASCII for output or not?
+        colorized (bool, optional): Use color or not?. Defaults to True.
     """
-    items_with_simple_upgrade = []
-    items_without_upgrade = []
-    items_with_conflict = []
-    new_items = []
-    ignored_items = []
-    unknown_items = []
+    lists_of_items_by_state = {
+        'no_upgrade': [],
+        'upgrade': [],
+        'conflict': [],
+        'new': [],
+        'unsupported': []
+    }
     for idst in items_dst:
         found = False
         if idst.type not in SUPPORTED_ELEMENT_TYPES:
-            unknown_items.append(idst)
+            lists_of_items_by_state['unsupported'].append(idst)
         else:
             for isrc in items_src:
                 if isrc.id == idst.id:
@@ -137,50 +173,50 @@ def diff_vro_items(items_src, items_dst):
                     found = True
                     idst.comp_version = isrc.version
                     if idst.version == "n/a":
-                        ignored_items.append(idst)
+                        lists_of_items_by_state['unsupported'].append(idst)
                     elif idst.version > isrc.version:
-                        items_with_simple_upgrade.append(idst)
+                        lists_of_items_by_state['upgrade'].append(idst)
                     elif idst.version < isrc.version:
                         logger.warning("Conflict detected on item: %s"  % idst)
-                        items_with_conflict.append(idst)
+                        lists_of_items_by_state['conflict'].append(idst)
                     elif idst.version == isrc.version:
                         if idst.checksum == isrc.checksum:
-                            items_without_upgrade.append(idst)
+                            lists_of_items_by_state['no_upgrade'].append(idst)
                         else:
                             logger.warning("Conflict detected on item: %s" % idst)
-                            items_with_conflict.append(idst)
+                            lists_of_items_by_state['conflict'].append(idst)
             if (not found) and (idst.type in SUPPORTED_ELEMENT_TYPES):
                 logger.debug("%s is NOT IN source package" % idst)
-                new_items.append(idst)
+                lists_of_items_by_state['new'].append(idst)
     logger.info("File A: %d elements" % len(items_src))
     logger.info("File B: %d elements" % len(items_dst))
-    logger.info("Items to upgrade:\t\t%d" % len(items_with_simple_upgrade))
-    logger.info("Items without upgrade:\t%d" % len(items_without_upgrade))
-    logger.info("Items in upgrade conflict:\t%d" % len(items_with_conflict))
-    logger.info("New items:\t\t\t%d" % len(new_items))
-    logger.warning("Unknown items:\t\t%d"% len(unknown_items))
-    total = (len(unknown_items)
-            +len(items_with_simple_upgrade)
-            +len(items_without_upgrade)
-            +len(items_with_conflict)
-            +len(new_items)
-            +len(ignored_items))
+    logger.info("Items to upgrade:\t\t%d" % len(lists_of_items_by_state['upgrade']))
+    logger.info("Items without upgrade:\t%d" % len(lists_of_items_by_state['no_upgrade']))
+    logger.info("Items in upgrade conflict:\t%d" % len(lists_of_items_by_state['conflict']))
+    logger.info("New items:\t\t\t%d" % len(lists_of_items_by_state['new']))
+    logger.warning("Unsupported items:\t\t%d"% len(lists_of_items_by_state['unsupported']))
+    total = (
+        len(lists_of_items_by_state['unsupported'])
+        +len(lists_of_items_by_state['upgrade'])
+        +len(lists_of_items_by_state['no_upgrade'])
+        +len(lists_of_items_by_state['conflict'])
+        +len(lists_of_items_by_state['new'])
+    )
     logger.info("Total items:\t\t\t%s" % total)
-    table_pprint(items_with_simple_upgrade,
-                items_without_upgrade,
-                items_with_conflict,
-                new_items,
-                ignored_items)
-    return len(items_with_conflict)
+    table_pprint(lists_of_items_by_state, ascii=ascii, colorized=colorized)
+    return len(lists_of_items_by_state['conflict'])
 
 
 @click.command(context_settings=CLI_CONTEXT_SETTINGS)
 @click.option('-l', '--legend', is_flag=True, help="Display the legend after the diff table")
 @click.option('-t', '--test', is_flag=True,
     help="Exit with `0` if package can be safely imported. Else, returns the number of errors")
+@click.option('-a', '--ascii', is_flag=True, help="Only use ASCII symbols to display results")
+@click.option('-b', '--no_color', is_flag=True, help="Do not colorized the output")
 @click.argument('reference_package', type=click.File('rb')) #, help="Reference package")
 @click.argument('compared_package', type=click.File('rb')) #, help="Package to compare with")
-def cli(reference_package: str, compared_package: str, legend: bool, test: bool):
+def cli(reference_package: str, compared_package: str, legend: bool,
+        test: bool, ascii: bool, no_color: bool):
     """Start a diff operation between two vRO packages.
 
     REFERENCE_PACKAGE is the package you want to use as source
@@ -191,10 +227,10 @@ def cli(reference_package: str, compared_package: str, legend: bool, test: bool)
     logger.info("Reading items from the destination package")
     vro_items_dst = get_vroitems_from_package(compared_package)
     logger.info("Starting the comparison of both contents")
-    exit_code = diff_vro_items(vro_items_src, vro_items_dst)
+    exit_code = diff_vro_items(vro_items_src, vro_items_dst, ascii=ascii, colorized=not no_color)
     if legend:
         logger.info("Legend display was requested.")
-        legend_print()
+        legend_print(ascii=ascii, colorized=not no_color)
     if test:
         logger.info("Exiting with number of conflicts:" + str(exit_code))
         exit(exit_code)
