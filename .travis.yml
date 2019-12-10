@@ -8,10 +8,9 @@ matrix:
   fast_finish: true
 
 install:
-- pip install .
+  - pip install .
 
 script:
-  - which vro-diff
   - vro-diff --help
   - vro-diff --legend ./tests/data/package_v1.0.package ./tests/data/package_v1.1.package
   - vro-diff --test   ./tests/data/package_v1.0.package ./tests/data/package_v1.1.package || if [[ $? -eq 3 ]]; then true; else false; fi
@@ -27,19 +26,18 @@ jobs:
     dist: bionic
   - python: 3.8-dev
     dist: bionic
-  - name: Python 3.7 on Windows
+  - name: Python 3.x on Windows
     os: windows
-    language: shell
+    language: bash
     before_install:
-    - choco install python
-    - python -m pip install --upgrade pip
+    - choco install python3 --params "/InstallDir:C:\\Python"
+    - export PATH="/c/Python:/c/Python/Scripts:$PATH"
     env:
-    - PATH=/c/Python37:/c/Python37/Scripts:$PATH
     - PYTHONIOENCODING=utf-8
   - name: Python 3.7 on macOS
     os: osx
     osx_image: xcode10.2
-    language: shell
+    language: bash
     before_install:
     - python3 -m pip install --upgrade virtualenv
     - virtualenv -p python3 --system-site-packages "$HOME/venv"
