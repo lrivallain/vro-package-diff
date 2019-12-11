@@ -1,6 +1,17 @@
 #!/usr/bin/env python
-"""Some config items
-"""
+"""Some config items."""
+
+# default python modules
+import logging
+
+# external modules
+import colored
+
+LOGGING_LEVEL_FILE = logging.DEBUG
+"""int: Log level to use."""
+
+LOGGING_FILE = "diff.log"
+"""str: Log file location."""
 
 SUPPORTED_ELEMENT_TYPES = [
     "Workflow",
@@ -11,7 +22,6 @@ SUPPORTED_ELEMENT_TYPES = [
 ]
 """list: Currently support is limited to the following types of items."""
 
-import colored
 OUTPUT_SETUP = {
     'no_upgrade': {
         'symbol_utf8': ' ⇄ ',
@@ -26,7 +36,7 @@ OUTPUT_SETUP = {
         'legend': "Items that will be upgraded in import process"
     },
     'new': {
-        'symbol_utf8': '[+]',
+        'symbol_utf8': ' ⊕ ',
         'symbol_ascii': '[+]',
         'color': colored.fg("yellow_1"),
         'legend': "New items (will be imported)"
