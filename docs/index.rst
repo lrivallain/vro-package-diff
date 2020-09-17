@@ -1,9 +1,18 @@
-.. include:: README.rst
+Welcome to vro_package_diff's documentation!
+============================================
 
 .. toctree::
-    :glob:
-    :maxdepth: 2
-    :caption: Documentation:
+   :maxdepth: 2
+   :caption: Contents:
 
-    README
-    vro_diff_package
+   readme
+   modules
+   contributing
+   authors
+   history
+
+Indices and tables
+==================
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

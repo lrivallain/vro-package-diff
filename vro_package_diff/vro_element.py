@@ -1,43 +1,45 @@
 #!/usr/bin/env python
-"""Define VROElementMetadata object class
-"""
+"""Define VROElementMetadata object class."""
 
-import zipfile, sys, os, hashlib, io, logging
-import xml.etree.ElementTree as ET
+# default python modules
+import hashlib
+import io
+import logging
+import xml.etree.ElementTree as Etree
+import zipfile
 
 # local imports
-from .config import *
+from .config import SUPPORTED_ELEMENT_TYPES
+
 
 logger = logging.getLogger(__name__)
 
 
-
 class VROElementMetadata():
-    """Abstract class to represent vRealize Orchestrator elements extracted from a vRO package.
-    """
+    """Abstract class to represent vRealize Orchestrator elements extracted from a vRO package."""
 
-    def __init__(self, id: str, xml_info: bytes, data_content: bytes,
-                xml_history: bytes):
-        """Build a new VROElementMetadata object from id, xml_info, data_content, xml_history.
+    def __init__(self, id: str, xml_info: bytes, data_content: bytes):
+        """Build a new VROElementMetadata object from id, xml_info, data_content.
 
         Args:
             id (str): Object ID (from the folder name in zip-package file).
             xml_info (bytes): info file content.
             data_content (bytes): data file content (could be a nested zip file or an XML one).
-            xml_history (bytes): version-history file content (XML).
         """
-        self.name = None # populated with self.read_data later
-        self.type = None # populated with self.read_data later
-        self.version = None # populated with self.read_data later
+        self.name = None  # populated with self.read_data later
+        self.type = None  # populated with self.read_data later
+        self.version = "0.0.0"  # populated with self.read_data later
+        self.dec_data_content = None  # populated with self.read_data later
         self.id = id
         self.type = self.get_item_type(xml_info)
-        self.checksum = hashlib.sha1(data_content).hexdigest()
         self.comp_version = None
         if self.type in SUPPORTED_ELEMENT_TYPES:
-            self.read_data(data_content)
+            self.data_content = data_content
+            self.read_data()
+            self.checksum = hashlib.sha1(data_content).hexdigest()
 
     def __str__(self):
-        """Define the string representation for object VROElementMetadata
+        """Define the string representation for object VROElementMetadata.
 
         Returns:
             str: string representation
@@ -53,57 +55,60 @@ class VROElementMetadata():
         Returns:
             str: The type name.
         """
-        root = ET.fromstring(xml_str)
+        root = Etree.fromstring(xml_str)
         for x in root.findall('entry'):
             if x.get('key') == "type":
                 raw_type = x.text
         if raw_type in SUPPORTED_ELEMENT_TYPES:
             if raw_type == 'ScriptModule':
-                return "Action" # rename scriptmodule --> action
+                return "Action"  # rename scriptmodule --> action
             return raw_type
         else:
             logger.warning("Unsupported element type for item: %s (%s)" % (self.id, raw_type))
             return "Unsupported"
 
-    def u_decode_plain_content(self, data: bytes):
+    def u_decode_plain_content(self):
         """UTF-16 or UTF-8 decoding of plain files.
-
-        Args:
-            data (bytes): content of a plain text file (XML/TXT...).
 
         Returns:
             str: a decoded version of the input data.
         """
         try:
-            dec_data = data.decode('utf-16-be')
+            dec_data = self.data_content.decode('utf-16-be')
             logger.debug("UTF-16 decoding for item %s" % self.id)
         except UnicodeDecodeError:
-            dec_data = data.decode('utf-8')
-            logger.debug("UTF-8 decoding failed for item %s" % self.id)
-        except:
-            logger.error("Both UTF-16 and UTF-8 decoding failed for item %s" % self.id)
-            dec_data = None
+            try:
+                dec_data = self.data_content.decode('utf-8')
+                logger.debug("UTF-8 decoding failed for item %s" % self.id)
+            except UnicodeDecodeError:
+                logger.error("Both UTF-16 and UTF-8 decoding failed for item %s" % self.id)
+                dec_data = None
         return dec_data
 
-    def read_data(self, data_content: bytes):
+    def read_data(self):
         """Read data content to extract object name.
 
         Populate self.name, self.version and self.type.
-
-        Args:
-            data_content (bytes): data file content (could be a nested zip file or an XML one).
         """
-        self.name = "Unsupported: %s" % self.type # default value
-        self.version = "n/a" # default value
+        self.name = "Unsupported: %s" % self.type  # default value
+        self.version = "n/a"  # default value
         # specific case of nested zip file for resourcesElements
         if self.type == "ResourceElement":
-            with zipfile.ZipFile(io.BytesIO(data_content),'r') as zip_data:
-                with zip_data.open(os.path.join('VSO-RESOURCE-INF','attribute_name'),'r') as name_file:
+            with zipfile.ZipFile(io.BytesIO(self.data_content), 'r') as zip_data:
+                with zip_data.open('VSO-RESOURCE-INF/attribute_name', 'r') as name_file:
                     self.name = name_file.read().decode('utf-8')
+                try:
+                    with zip_data.open('VSO-RESOURCE-INF/attribute_version', 'r') as version_file:
+                        self.version = version_file.read().decode('utf-8')
+                except KeyError:
+                    self.version = "0.0.0"
+                with zip_data.open('VSO-RESOURCE-INF/data', 'r') as data_file:
+                    self.data_content = data_file.read()
+                    self.dec_data_content = self.u_decode_plain_content()
         elif self.type in SUPPORTED_ELEMENT_TYPES:
-            dec_data_content = self.u_decode_plain_content(data_content)
-            root = ET.fromstring(dec_data_content)
-            self.version = root.get('version')
+            self.dec_data_content = self.u_decode_plain_content()
+            root = Etree.fromstring(self.dec_data_content)
+            self.version = root.get('version', "0.0.0")
             if self.type == 'Workflow':
                 namespaces = {'workflow': 'http://vmware.com/vco/workflow'}
                 self.name = root.find('workflow:display-name', namespaces).text
