@@ -4,7 +4,7 @@ wheel
 watchdog
 tox
 coverage
-Sphinx
+Sphinx==3.2.1
 twine
 ptpython
 pytest
