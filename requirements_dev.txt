@@ -8,7 +8,7 @@ Sphinx
 twine
 ptpython
 pytest
-pytest-runner
+pytest-runner==5.2
 flake8
 flake8-bugbear
 flake8-colors
