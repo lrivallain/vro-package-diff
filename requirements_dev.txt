@@ -6,7 +6,7 @@ tox
 coverage
 Sphinx
 twine
-ptpython
+ptpython==3.0.5
 pytest
 pytest-runner
 flake8
