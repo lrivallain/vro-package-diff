@@ -1,6 +1,6 @@
 pip
 bump2version
-wheel
+wheel==0.35.1
 watchdog
 tox
 coverage
