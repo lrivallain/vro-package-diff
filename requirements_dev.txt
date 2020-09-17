@@ -15,4 +15,4 @@ flake8-colors
 flake8-docstrings
 flake8-import-order
 pep8-naming
-sphinx_rtd_theme
+sphinx_rtd_theme==0.5.0
