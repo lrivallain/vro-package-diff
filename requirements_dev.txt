@@ -3,7 +3,7 @@ bump2version
 wheel
 watchdog
 tox
-coverage
+coverage==5.3
 Sphinx
 twine
 ptpython
