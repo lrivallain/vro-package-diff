@@ -11,7 +11,7 @@ pytest
 pytest-runner
 flake8
 flake8-bugbear
-flake8-colors
+flake8-colors==0.1.6
 flake8-docstrings
 flake8-import-order
 pep8-naming
