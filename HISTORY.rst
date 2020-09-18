@@ -2,6 +2,33 @@
 History
 =======
 
+2.2.0 (2020-09-18)
+------------------
+
+Check for values in the configuration elements: if so, exit with failure status.
+
+Add a new flag to enable this check:
+
+::
+
+   -e, --empty-config   Check for values in the configuration
+                           elements: if so, exit with failure status.
+
+
+2.1.0 (2019-12-19)
+------------------
+
+Provide an option to export diff files to a specific folder when a conflict is detected
+
+Add a new option to specify a diff destination folder:
+
+::
+
+   -d, --diff PATH   A folder where to generate unified diff
+                        files output
+
+
+
 2.0.2 (2019-12-10)
 ------------------
 
