@@ -79,20 +79,25 @@ You can get the usage help by using the ``-h``/``--help`` flag:
 
    Usage: vro-diff [OPTIONS] COMPARED_PACKAGE
 
-       Compare two vRealize Orchestrator packages.
+   Compare two vRealize Orchestrator packages.
 
-       Use the [--reference_package] option to specify the reference package.
+   Use the [-r/--reference_package] option to specify the reference package.
 
    Options:
-       -r, --reference_package FILENAME
-                                       Reference package to compare your package
-                                       with.  [required]
-       -l, --legend                    Display the legend after the diff table
-       -t, --test                      Exit with `0` if package can be safely
-                                       imported. Else, returns the number of errors
-       -a, --ascii                     Only use ASCII symbols to display results
-       -b, --no_color                  Do not colorized the output
-       -d, --diff PATH                 A folder where to generate unified diff
+   -r, --reference_package FILENAME
+                                    Reference package to compare your package
+                                    with.  [required]
+   -l, --legend                    Display the legend after the diff table
+   -t, --test                      Exit with `0` if package can be safely
+                                    imported. Else, returns the number of errors
+   -a, --ascii                     Only use ASCII symbols to display results
+   -b, --no_color                  Do not colorized the output
+   -d, --diff PATH                 A folder where to generate unified diff
+                                    files output
+   -e, --empty-config              Check for values in the configuration
+                                    elements: if so, exit with failure status.
+   -h, --help                      Show this message and exit.
+
 
 .. _unified diff: https://www.gnu.org/software/diffutils/manual/html_node/Detailed-Unified.html
 

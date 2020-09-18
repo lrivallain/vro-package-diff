@@ -150,6 +150,35 @@ def table_pprint(lists_of_items_by_state: dict, ascii: bool = False, colorized: 
         print(SingleTable(data, title).table)
 
 
+def unexpected_values_pprint(lists_of_items_by_state: dict, ascii: bool = False):
+    """Generate and print a pretty table for output information.
+
+    Args:
+        lists_of_items_by_state (dict of VROElementMetadata[]): A dict of items, stored by
+            import state
+        ascii (bool): Use ASCII for output or not? Defaults to False.
+        colorized (bool, optional): Use color or not?. Defaults to True.
+    """
+    if not lists_of_items_by_state['unexpected_values']:
+        return
+    data = []
+    title = "Unexpected values in configurationElements"
+    # Headers
+    data.append(["ID", "Name", "Type", "Package", "Nb values"])
+    for element in lists_of_items_by_state.get('unexpected_values', []):
+        data.append([
+            element.id,
+            element.name,
+            element.type,
+            element.version,
+            element.valued_items
+        ])
+    if ascii:
+        print("\n" + AsciiTable(data, title).table)
+    else:
+        print("\n" + SingleTable(data, title).table)
+
+
 def create_diff_file(src_elt: bytes, dst_elt: bytes, src_name: str, dst_name: str, diff_folder: str, state: str):
     """Create a diff file between two versions of element data_content.
 
@@ -188,7 +217,8 @@ def diff_vro_items(items_src,
                    compared_package: str,
                    ascii: bool = False,
                    colorized: bool = True,
-                   diff_folder: bool = None):
+                   diff_folder: bool = None,
+                   empty_config: bool = True):
     """Compare two vRO items lists.
 
     Args:
@@ -205,7 +235,8 @@ def diff_vro_items(items_src,
         'upgrade': [],
         'conflict': [],
         'new': [],
-        'unsupported': []
+        'unsupported': [],
+        'unexpected_values': []
     }
     for idst in items_dst:
         found = False
@@ -242,6 +273,9 @@ def diff_vro_items(items_src,
             if (not found) and (idst.type in SUPPORTED_ELEMENT_TYPES):
                 logger.debug("%s is NOT IN source package" % idst)
                 state = 'new'
+            if idst.type == "ConfigurationElement" and empty_config:
+                if idst.count_values_from_configuration_elt():
+                    lists_of_items_by_state['unexpected_values'].append(idst)
         lists_of_items_by_state[state].append(idst)
     logger.info("File A: %d elements" % len(items_src))
     logger.info("File B: %d elements" % len(items_dst))
@@ -249,6 +283,7 @@ def diff_vro_items(items_src,
     logger.info("Items without upgrade:\t%d" % len(lists_of_items_by_state['no_upgrade']))
     logger.info("Items in upgrade conflict:\t%d" % len(lists_of_items_by_state['conflict']))
     logger.info("New items:\t\t\t%d" % len(lists_of_items_by_state['new']))
+    logger.info("ConfigurationElements with values:\t\t\t%d" % len(lists_of_items_by_state['unexpected_values']))
     logger.warning("Unsupported items:\t\t%d" % len(lists_of_items_by_state['unsupported']))
     total = (
         len(lists_of_items_by_state['unsupported'])
@@ -259,25 +294,37 @@ def diff_vro_items(items_src,
     )
     logger.info("Total items:\t\t\t%s" % total)
     table_pprint(lists_of_items_by_state, ascii=ascii, colorized=colorized)
-    return len(lists_of_items_by_state['conflict'])
+    return lists_of_items_by_state
 
 
 @click.command(context_settings=CLI_CONTEXT_SETTINGS)
-@click.option('-r',
-              '--reference_package',
+@click.option('-r', '--reference_package',
               help="Reference package to compare your package with.",
               type=click.File('rb'),
               required=True)
-@click.argument('compared_package', type=click.File('rb'))
-@click.option('-l', '--legend', is_flag=True, help="Display the legend after the diff table")
-@click.option('-t', '--test', is_flag=True,
+@click.argument('compared_package',
+                type=click.File('rb'))
+@click.option('-l', '--legend',
+              is_flag=True,
+              help="Display the legend after the diff table")
+@click.option('-t', '--test',
+              is_flag=True,
               help="Exit with `0` if package can be safely imported. Else, returns the number of errors")
-@click.option('-a', '--ascii', is_flag=True, help="Only use ASCII symbols to display results")
-@click.option('-b', '--no_color', is_flag=True, help="Do not colorized the output")
-@click.option('-d', '--diff', help="A folder where to generate unified diff files output",
-              type=click.Path(dir_okay=True, resolve_path=True))
+@click.option('-a', '--ascii',
+              is_flag=True,
+              help="Only use ASCII symbols to display results")
+@click.option('-b', '--no_color',
+              is_flag=True,
+              help="Do not colorized the output")
+@click.option('-d', '--diff',
+              type=click.Path(dir_okay=True, resolve_path=True),
+              help="A folder where to generate unified diff files output")
+@click.option('-e', '--empty-config',
+              is_flag=True,
+              help="Check for values in the configuration elements: if so, exit with failure status.")
 def cli(reference_package: str, compared_package: str, legend: bool = False,
-        test: bool = False, ascii: bool = False, no_color: bool = False, diff: str = None):
+        test: bool = False, ascii: bool = False, no_color: bool = False, diff: str = None,
+        empty_config: bool = False):
     """Compare two vRealize Orchestrator packages.
 
     Use the [-r/--reference_package] option to specify the reference package.
@@ -287,7 +334,7 @@ def cli(reference_package: str, compared_package: str, legend: bool = False,
     logger.info("Reading items from the destination package")
     vro_items_dst = get_vroitems_from_package(compared_package)
     logger.info("Starting the comparison of both contents")
-    exit_code = diff_vro_items(
+    lists_of_items_by_state = diff_vro_items(
         vro_items_src,
         vro_items_dst,
         ascii=ascii,
@@ -302,10 +349,16 @@ def cli(reference_package: str, compared_package: str, legend: bool = False,
     if diff:
         logger.info("Unified diff files are stored in: %s" % diff)
         print("Unified diff files are stored in: %s" % diff)
+    exit_code = 0
     if test:
-        logger.info("Exiting with number of conflicts:" + str(exit_code))
-        exit(exit_code)
+        logger.info("Exiting with number of conflicts:" + str(len(lists_of_items_by_state['conflict'])))
+        exit_code += len(lists_of_items_by_state['conflict'])
+    if empty_config:
+        unexpected_values_pprint(lists_of_items_by_state, ascii=ascii)
+        logger.info("Exiting with number of values in configurationElements")
+        exit_code += len(lists_of_items_by_state['unexpected_values'])
     logger.info("End of execution of the diff tool for vRO packages.")
+    exit(exit_code)
 
 
 def main():
