@@ -302,29 +302,29 @@ def diff_vro_items(items_src,
 
 @click.command(context_settings=CLI_CONTEXT_SETTINGS)
 @click.option('-r', '--reference_package',
-                help="Reference package to compare your package with.",
-                type=click.File('rb'),
-                required=True)
+              help="Reference package to compare your package with.",
+              type=click.File('rb'),
+              required=True)
 @click.argument('compared_package',
                 type=click.File('rb'))
 @click.option('-l', '--legend',
-                is_flag=True,
-                help="Display the legend after the diff table")
+              is_flag=True,
+              help="Display the legend after the diff table")
 @click.option('-t', '--test',
-                is_flag=True,
-                help="Exit with `0` if package can be safely imported. Else, returns the number of errors")
+              is_flag=True,
+              help="Exit with `0` if package can be safely imported. Else, returns the number of errors")
 @click.option('-a', '--ascii',
-                is_flag=True,
-                help="Only use ASCII symbols to display results")
+              is_flag=True,
+              help="Only use ASCII symbols to display results")
 @click.option('-b', '--no_color',
-                is_flag=True,
-                help="Do not colorized the output")
+              is_flag=True,
+              help="Do not colorized the output")
 @click.option('-d', '--diff',
-                type=click.Path(dir_okay=True, resolve_path=True),
-                help="A folder where to generate unified diff files output")
+              type=click.Path(dir_okay=True, resolve_path=True),
+              help="A folder where to generate unified diff files output")
 @click.option('-e', '--empty-config',
-                is_flag=True,
-                help="Check for values in the configuration elements: if so, exit with failure status.")
+              is_flag=True,
+              help="Check for values in the configuration elements: if so, exit with failure status.")
 def cli(reference_package: str, compared_package: str, legend: bool = False,
         test: bool = False, ascii: bool = False, no_color: bool = False, diff: str = None,
         empty_config: bool = False):

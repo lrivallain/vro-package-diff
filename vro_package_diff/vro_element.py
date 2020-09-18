@@ -30,7 +30,7 @@ class VROElementMetadata():
         self.type = None  # populated with self.read_data later
         self.version = "0.0.0"  # populated with self.read_data later
         self.dec_data_content = None  # populated with self.read_data later
-        self.valued_items = 0 # populated in count_values_from_configuration_elt later
+        self.valued_items = 0  # populated in count_values_from_configuration_elt later
         self.id = id
         self.type = self.get_item_type(xml_info)
         self.comp_version = None
