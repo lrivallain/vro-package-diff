@@ -1,8 +1,8 @@
 vRO-package-diff tool
 =====================
 
-|PyPI version shields.io| |PyPI pyversions| |Build Status|
-|Documentation Status| |GitHub|
+|PyPI version shields.io| |PyPI pyversions| |GitHub actions build status| |Travis build status|
+|Documentation status| |GitHub|
 
 Project description
 -------------------
@@ -100,9 +100,11 @@ You can get the usage help by using the ``-h``/``--help`` flag:
    :target: https://pypi.python.org/pypi/vro-package-diff/
 .. |PyPI pyversions| image:: https://img.shields.io/pypi/pyversions/vro-package-diff.svg
    :target: https://pypi.python.org/pypi/vro-package-diff/
-.. |Build Status| image:: https://travis-ci.org/lrivallain/vro-package-diff.svg?branch=master
+.. |GitHub actions build status| image:: https://github.com/lrivallain/vro-package-diff/workflows/Python%20application/badge.svg
+   :target: https://github.com/lrivallain/vro-package-diff/actions
+.. |Travis build status| image:: https://travis-ci.org/lrivallain/vro-package-diff.svg?branch=master
    :target: https://travis-ci.org/lrivallain/vro-package-diff
-.. |Documentation Status| image:: https://readthedocs.org/projects/vro_package_diff/badge/?version=latest
+.. |Documentation status| image:: https://readthedocs.org/projects/vro_package_diff/badge/?version=latest
    :target: https://vro_package_diff.readthedocs.io/en/latest/?badge=latest
 .. |GitHub| image:: https://img.shields.io/github/license/lrivallain/vro-package-diff
 .. |Sample of output| image:: ./docs/_static/vro-package-diff-sample.png
