@@ -30,6 +30,7 @@ class VROElementMetadata():
         self.type = None  # populated with self.read_data later
         self.version = "0.0.0"  # populated with self.read_data later
         self.dec_data_content = None  # populated with self.read_data later
+        self.valued_items = 0 # populated in count_values_from_configuration_elt later
         self.id = id
         self.type = self.get_item_type(xml_info)
         self.comp_version = None
@@ -116,3 +117,21 @@ class VROElementMetadata():
                 self.name = root.get('name')
             elif self.type == 'ConfigurationElement':
                 self.name = root.find('display-name').text
+
+    def count_values_from_configuration_elt(self):
+        """Count the number of values found in a configurationElement.
+
+        Returns:
+            int: number of values found in the configurationElement items.
+        """
+        if not self.type == 'ConfigurationElement':
+            logger.warn("Invalid type to count values in")
+            return 0
+        self.dec_data_content = self.u_decode_plain_content()
+        root = Etree.fromstring(self.dec_data_content)
+        atts = root.find('atts')
+        for att in atts.findall('att'):
+            if att.find('value') is not None:
+                self.valued_items += 1
+        logger.debug("Found %d values in %s" % (self.valued_items, self.name))
+        return self.valued_items
