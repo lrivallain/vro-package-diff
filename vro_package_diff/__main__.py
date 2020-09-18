@@ -165,9 +165,6 @@ def unexpected_values_pprint(lists_of_items_by_state: dict, ascii: bool = False)
     title = "Unexpected values in configurationElements"
     # Headers
     data.append(["ID", "Name", "Type", "Package", "Nb values"])
-    symbol_mode = "symbol_utf8"
-    if ascii:
-        symbol_mode = "symbol_ascii"
     for element in lists_of_items_by_state.get('unexpected_values', []):
         data.append([
             element.id,
