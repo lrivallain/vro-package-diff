@@ -10,10 +10,6 @@ script: tox
 
 jobs:
   include:
-  - python: 3.5
-    env: TOXENV=py35
-  - python: 3.6
-    env: TOXENV=py36
   - python: 3.7
     env: TOXENV=py37
   - python: 3.8
@@ -33,27 +29,20 @@ jobs:
     env:
     - PYTHONIOENCODING=utf-8
     - TOXENV=py38
-  - name: Python 3.7 on macOS
-    os: osx
-    osx_image: xcode10.2
-    language: bash
-    before_install:
-    - python3 -m pip install --upgrade virtualenv
-    - virtualenv -p python3 --system-site-packages "$HOME/venv"
-    - source "$HOME/venv/bin/activate"
   - stage: Documentation
-    python: 3.7
+    python: 3.8
     install:
     - pip install Pygments mock sphinx sphinx-rtd-theme recommonmark
     - pip install -U -r requirements_dev.txt
     - pip install .
     script:
     - make docs
-    env: TOXENV=py37
+    env: TOXENV=py38
   - stage: Release & Deploy
-    python: 3.7
+    python: 3.8
     script: true
     install: true
+    env: TOXENV=py38
     deploy:
     - provider: pypi
       user: lrivallain
