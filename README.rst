@@ -1,10 +1,8 @@
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Flrivallain%2Fvro-package-diff.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Flrivallain%2Fvro-package-diff?ref=badge_shield)
-
 vRO-package-diff tool
 =====================
 
 |PyPI version shields.io| |PyPI pyversions| |GitHub actions build status| |Travis build status|
-|Documentation status| |GitHub|
+|Documentation status| |GitHub| |Fossa Status|
 
 Project description
 -------------------
@@ -115,7 +113,12 @@ You can get the usage help by using the ``-h``/``--help`` flag:
    :target: https://vro_package_diff.readthedocs.io/en/latest/?badge=latest
 .. |GitHub| image:: https://img.shields.io/github/license/lrivallain/vro-package-diff
 .. |Sample of output| image:: ./docs/_static/vro-package-diff-sample.png
+.. |Fossa Status| image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Flrivallain%2Fvro-package-diff.svg?type=shield
 
 
-## License
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Flrivallain%2Fvro-package-diff.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Flrivallain%2Fvro-package-diff?ref=badge_large)
+License
+~~~~~~~
+
+|Fossa Status large| 
+
+.. |Fossa Status large| image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Flrivallain%2Fvro-package-diff.svg?type=large
