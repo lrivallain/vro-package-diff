@@ -18,8 +18,9 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     "terminaltables",  # Pretty print a table
-    "colored",  # A bit of colors from fancy term
-    "click",  # CLI arguments management
+    "colored",         # A bit of colors from fancy term
+    "click",           # CLI arguments management
+    "packaging"        # Used to compare versions numbers
 ]
 
 setup_requirements = [

@@ -7,6 +7,7 @@ import io
 import logging
 import xml.etree.ElementTree as Etree
 import zipfile
+from packaging import version
 
 # local imports
 from .config import SUPPORTED_ELEMENT_TYPES
@@ -28,7 +29,7 @@ class VROElementMetadata():
         """
         self.name = None  # populated with self.read_data later
         self.type = None  # populated with self.read_data later
-        self.version = "0.0.0"  # populated with self.read_data later
+        self.version = version.parse("0.0.0")  # populated with self.read_data later
         self.dec_data_content = None  # populated with self.read_data later
         self.valued_items = 0  # populated in count_values_from_configuration_elt later
         self.id = id
@@ -92,7 +93,7 @@ class VROElementMetadata():
         Populate self.name, self.version and self.type.
         """
         self.name = "Unsupported: %s" % self.type  # default value
-        self.version = "n/a"  # default value
+        self.version = "n/a" # default value
         # specific case of nested zip file for resourcesElements
         if self.type == "ResourceElement":
             with zipfile.ZipFile(io.BytesIO(self.data_content), 'r') as zip_data:
@@ -100,16 +101,17 @@ class VROElementMetadata():
                     self.name = name_file.read().decode('utf-8')
                 try:
                     with zip_data.open('VSO-RESOURCE-INF/attribute_version', 'r') as version_file:
-                        self.version = version_file.read().decode('utf-8')
+                        _version = version_file.read().decode('utf-8')
                 except KeyError:
-                    self.version = "0.0.0"
+                    _version = "0.0.0"
+                self.version = version.parse(_version)
                 with zip_data.open('VSO-RESOURCE-INF/data', 'r') as data_file:
                     self.data_content = data_file.read()
                     self.dec_data_content = self.u_decode_plain_content()
         elif self.type in SUPPORTED_ELEMENT_TYPES:
             self.dec_data_content = self.u_decode_plain_content()
             root = Etree.fromstring(self.dec_data_content)
-            self.version = root.get('version', "0.0.0")
+            _version = root.get('version', "0.0.0")
             if self.type == 'Workflow':
                 namespaces = {'workflow': 'http://vmware.com/vco/workflow'}
                 self.name = root.find('workflow:display-name', namespaces).text
@@ -117,6 +119,7 @@ class VROElementMetadata():
                 self.name = root.get('name')
             elif self.type == 'ConfigurationElement':
                 self.name = root.find('display-name').text
+            self.version = version.parse(_version)
 
     def count_values_from_configuration_elt(self):
         """Count the number of values found in a configurationElement.
