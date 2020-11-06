@@ -7,6 +7,8 @@ import io
 import logging
 import xml.etree.ElementTree as Etree
 import zipfile
+
+# third Party
 from packaging import version
 
 # local imports
@@ -93,7 +95,7 @@ class VROElementMetadata():
         Populate self.name, self.version and self.type.
         """
         self.name = "Unsupported: %s" % self.type  # default value
-        self.version = "n/a" # default value
+        self.version = "n/a"  # default value
         # specific case of nested zip file for resourcesElements
         if self.type == "ResourceElement":
             with zipfile.ZipFile(io.BytesIO(self.data_content), 'r') as zip_data:
