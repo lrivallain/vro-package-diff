@@ -14,9 +14,9 @@ import click
 from terminaltables import AsciiTable, SingleTable
 
 # local imports
+from . import __version__
 from .config import CLI_CONTEXT_SETTINGS, LOGGING_FILE, LOGGING_LEVEL_FILE, OUTPUT_SETUP, SUPPORTED_ELEMENT_TYPES
 from .vro_element import VROElementMetadata
-from . import __version__
 
 # Windows trick: no colored output
 if platform.system().lower() == "windows":
