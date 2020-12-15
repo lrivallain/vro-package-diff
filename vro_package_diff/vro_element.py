@@ -117,7 +117,7 @@ class VROElementMetadata():
             if self.type == 'Workflow':
                 namespaces = {'workflow': 'http://vmware.com/vco/workflow'}
                 self.name = root.find('workflow:display-name', namespaces).text
-            elif self.type == 'Action' or self.type == "ScriptModule":
+            elif self.type == 'Action' or self.type == "ScriptModule" or self.type == "PolicyTemplate":
                 self.name = root.get('name')
             elif self.type == 'ConfigurationElement':
                 self.name = root.find('display-name').text
