@@ -324,8 +324,6 @@ def diff_vro_items(items_src,
 @click.option('-e', '--empty-config',
               is_flag=True,
               help="Check for values in the configuration elements: if so, exit with failure status.")
-@click.option('-V', '--version', is_flag=True,
-              help="Get version info")
 def cli(reference_package: str, compared_package: str, legend: bool = False,
         test: bool = False, ascii: bool = False, no_color: bool = False, diff: str = None,
         empty_config: bool = False):
