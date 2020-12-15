@@ -16,6 +16,7 @@ from terminaltables import AsciiTable, SingleTable
 # local imports
 from .config import CLI_CONTEXT_SETTINGS, LOGGING_FILE, LOGGING_LEVEL_FILE, OUTPUT_SETUP, SUPPORTED_ELEMENT_TYPES
 from .vro_element import VROElementMetadata
+from . import __version__
 
 # Windows trick: no colored output
 if platform.system().lower() == "windows":
@@ -298,6 +299,7 @@ def diff_vro_items(items_src,
 
 
 @click.command(context_settings=CLI_CONTEXT_SETTINGS)
+@click.version_option(__version__)
 @click.option('-r', '--reference_package',
               help="Reference package to compare your package with.",
               type=click.File('rb'),
@@ -322,6 +324,8 @@ def diff_vro_items(items_src,
 @click.option('-e', '--empty-config',
               is_flag=True,
               help="Check for values in the configuration elements: if so, exit with failure status.")
+@click.option('-V', '--version', is_flag=True,
+              help="Get version info")
 def cli(reference_package: str, compared_package: str, legend: bool = False,
         test: bool = False, ascii: bool = False, no_color: bool = False, diff: str = None,
         empty_config: bool = False):
