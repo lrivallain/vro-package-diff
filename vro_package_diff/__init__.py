@@ -13,6 +13,6 @@ __all__ = [
     'vro_element',
 ]
 
-__version__ = "2.2.2"
+__version__ = "2.2.3"
 """Define the version of the package.
 """

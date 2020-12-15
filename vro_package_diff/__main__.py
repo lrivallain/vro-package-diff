@@ -14,6 +14,7 @@ import click
 from terminaltables import AsciiTable, SingleTable
 
 # local imports
+from . import __version__
 from .config import CLI_CONTEXT_SETTINGS, LOGGING_FILE, LOGGING_LEVEL_FILE, OUTPUT_SETUP, SUPPORTED_ELEMENT_TYPES
 from .vro_element import VROElementMetadata
 
@@ -298,6 +299,7 @@ def diff_vro_items(items_src,
 
 
 @click.command(context_settings=CLI_CONTEXT_SETTINGS)
+@click.version_option(__version__)
 @click.option('-r', '--reference_package',
               help="Reference package to compare your package with.",
               type=click.File('rb'),

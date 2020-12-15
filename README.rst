@@ -61,6 +61,16 @@ Install and update using pip:
 
 vRO-package-diff supports Python 3.5 and newer.
 
+
+Test installation
+-----------------
+
+::
+   vro-diff -V
+
+This should produce an output with the current installed version of ``vro-package-diff``.
+
+
 Usage example
 -------------
 
