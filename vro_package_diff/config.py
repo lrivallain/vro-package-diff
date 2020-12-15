@@ -18,7 +18,8 @@ SUPPORTED_ELEMENT_TYPES = [
     "ScriptModule",
     "Action",
     "ResourceElement",
-    "ConfigurationElement"
+    "ConfigurationElement",
+    "PolicyTemplate"
 ]
 """list: Currently support is limited to the following types of items."""
 
