@@ -3,6 +3,12 @@ History
 =======
 
 
+2.2.3 (in progress)
+-------------------
+
+Display the vro-diff version with a click option #48
+
+
 2.2.2 (2020-12-15)
 ------------------
 
